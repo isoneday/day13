@@ -59,7 +59,6 @@ Recommended exercise:
 
 - Implement `addToCart`.
 - Implement `removeFromCart`.
-- Implement `changeQuantity`.
 - Display cart total from a selector.
 
 ### Teaching Explanation: Product List And Cart
@@ -160,7 +159,7 @@ Simulate changing stock:
 
 - Periodically update stock counts.
 - Disable cart actions when stock reaches zero.
-- Notify the user when a cart item becomes unavailable.
+- Block checkout when a cart item becomes unavailable.
 
 Teaching note: stock is central state because product cards and cart behavior both depend on it.
 

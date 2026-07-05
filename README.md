@@ -27,9 +27,9 @@ By the end of this training project, participants should be able to:
 
 No backend, database, authentication service, or external API should be added. Demo data should live inside the frontend project.
 
-## Intended App Scope
+## App Scope
 
-The future app should include only a compact shop experience:
+The app includes a compact shop experience:
 
 - Product listing
 - Search input
@@ -66,6 +66,12 @@ Run the local development server:
 npm run dev
 ```
 
+Run lightweight state verification:
+
+```bash
+npm run verify
+```
+
 Build for production:
 
 ```bash
@@ -80,7 +86,9 @@ npm run preview
 
 ## Current App Status
 
-The project currently contains the initial Vite React shell and folder structure for the future training app. Redux Toolkit, React Redux, and RxJS are installed, but Redux features and RxJS streams have not been implemented yet.
+The project contains a working training app with product listing, cart state, debounced search, voucher validation, live stock simulation, checkout stock validation, notification center, debug panels, and architecture teaching panels.
+
+Manual test steps are documented in [docs/TEST_PLAN.md](docs/TEST_PLAN.md). Use `npm run build` and `npm run verify` before classroom delivery.
 
 ## Project Rule
 

@@ -51,7 +51,7 @@ Use RxJS for:
 - Debounced search changes
 - Simulated async voucher validation
 - Periodic stock updates
-- Timed notification dismissal
+- Timed notification arrival
 - Streams where cancellation or timing is part of the lesson
 
 ## Suggested Redux Slices
@@ -60,7 +60,7 @@ Use RxJS for:
 - `cartSlice`: stores cart items, checkout step, and cart error state.
 - `voucherSlice`: stores voucher input, validation status, discount, and error message.
 - `stockSlice`: stores stock counts and live update status.
-- `notificationsSlice`: stores visible notification messages.
+- `notificationsSlice`: stores notification items and unread count.
 
 ## Current Milestone: Product List And Cart
 
