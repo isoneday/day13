@@ -7,6 +7,7 @@ const initialState = {
   searchKeyword: '',
   loading: false,
   error: null,
+  lastStockUpdate: null,
 };
 
 const productsSlice = createSlice({
@@ -19,9 +20,20 @@ const productsSlice = createSlice({
     searchKeywordChanged(state, action) {
       state.searchKeyword = action.payload;
     },
+    productStockUpdated(state, action) {
+      const product = state.items.find((item) => item.id === action.payload.productId);
+
+      if (!product) {
+        return;
+      }
+
+      product.stock = Math.max(0, action.payload.stock);
+      state.lastStockUpdate = action.payload.updatedAt;
+    },
   },
 });
 
-export const { categorySelected, searchKeywordChanged } = productsSlice.actions;
+export const { categorySelected, productStockUpdated, searchKeywordChanged } =
+  productsSlice.actions;
 
 export default productsSlice.reducer;

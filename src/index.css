@@ -41,6 +41,16 @@ button:hover {
   background: #205b4c;
 }
 
+button:disabled {
+  cursor: not-allowed;
+  background: #ccd6d2;
+  color: #66736f;
+}
+
+button:disabled:hover {
+  background: #ccd6d2;
+}
+
 .app-shell {
   display: grid;
   gap: 24px;
@@ -193,6 +203,10 @@ select {
   padding: 18px;
 }
 
+.product-card-out {
+  background: #f7f2f2;
+}
+
 .category-label {
   margin-bottom: 8px;
   color: #6b7780;
@@ -308,6 +322,20 @@ dd {
 
 .voucher-status-validating {
   color: #8a5b15;
+}
+
+.stock-simulator {
+  display: grid;
+  gap: 12px;
+}
+
+.stock-simulator h2,
+.stock-simulator p {
+  margin-bottom: 0;
+}
+
+.stock-update-time {
+  color: #3a4650;
 }
 
 .empty-state,

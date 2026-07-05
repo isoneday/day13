@@ -164,6 +164,24 @@ Simulate changing stock:
 
 Teaching note: stock is central state because product cards and cart behavior both depend on it.
 
+### Teaching Explanation: Live Stock Stream
+
+The live stock simulator shows that state changes can come from system events, not only user actions.
+
+Step-by-step flow:
+
+1. `LiveStockSimulator` starts an RxJS `interval(5000)`.
+2. Every 5 seconds, the stream selects one random product.
+3. The simulator calculates a new stock value and prevents it from going below 0.
+4. It dispatches `productStockUpdated`.
+5. `productsSlice` stores the new stock value and `lastStockUpdate`.
+6. Product cards re-render from Redux state.
+7. If a product reaches 0 stock, the card shows **Out of stock** and disables **Add to cart**.
+
+Teaching note: the stream represents a system event. Redux stores the current stock availability. The UI derives button state from that current stock.
+
+Real systems would not trust this frontend simulation for checkout. A backend must validate stock before an order is accepted.
+
 ## Part 8: Management Transfer
 
 End by connecting code decisions to team decisions:

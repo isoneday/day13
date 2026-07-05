@@ -16,7 +16,7 @@ Redux Toolkit store
   -> product state
   -> cart state
   -> voucher state
-  -> stock state later
+  -> stock availability in product state
   -> notification state later
 
 RxJS streams
@@ -56,7 +56,7 @@ Use RxJS for:
 
 ## Suggested Redux Slices
 
-- `productsSlice`: stores product catalog, selected category, search keyword, loading, and error state.
+- `productsSlice`: stores product catalog, selected category, search keyword, stock availability, loading, error state, and the last stock update time.
 - `cartSlice`: stores cart items, checkout step, and cart error state.
 - `voucherSlice`: stores voucher input, validation status, discount, and error message.
 - `stockSlice`: stores stock counts and live update status.
@@ -92,6 +92,23 @@ Search input typing
 ```
 
 Search typing is a stream because each keystroke is an event over time. The product filter is shared feature state because the active keyword is useful for the product list, Debug Panel, and teaching flow. The product list result is not stored separately; it is derived in the UI from `items`, `selectedCategory`, and `searchKeyword`.
+
+## Live Stock Simulation Flow
+
+Stock availability can change because of system events, not only user clicks:
+
+```text
+RxJS interval(5000)
+  -> LiveStockSimulator selects one random product
+  -> simulator calculates the next stock and prevents values below 0
+  -> dispatch(productStockUpdated({ productId, stock, updatedAt }))
+  -> productsSlice stores the current stock and lastStockUpdate
+  -> ProductCard, ProductList, and DebugPanel re-render from Redux state
+```
+
+The stock update event is a stream because it happens over time without direct user input. The current stock value is Redux state because multiple UI areas need the same answer. The visible product list is still derived from state; it is not stored as a separate result.
+
+This is only a frontend simulation. A real shop would validate stock on the backend before accepting checkout, because frontend stock can be stale or manipulated.
 
 ## Voucher Validation Flow
 
