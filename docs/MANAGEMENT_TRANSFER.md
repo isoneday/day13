@@ -2,108 +2,24 @@
 
 ## Purpose
 
-Management transfer connects technical state management decisions to team architecture and governance. ShopSphere Day 13 uses a small shop scenario to show how local coding choices can become coordination issues in a larger organization.
+Management transfer connects technical state management decisions to ownership, review, risk, and governance. ShopSphere Day 13 uses a small shop so participants can practice that translation safely.
 
-## From Code To Governance
+## Architecture Decision Table
 
-State decisions answer technical questions:
+| Topic | Technical decision | Management concern |
+| --- | --- | --- |
+| Cart state | Store in Redux | Incorrect cart state affects checkout trust and support load. |
+| Voucher typing | Process with RxJS | Timing and cancellation affect pricing clarity. |
+| Voucher result | Store in Redux | Discount state affects totals and business rules. |
+| Live stock | Stream updates, store current stock in Redux | Inventory changes affect purchase promises. |
+| Checkout validation | Block unavailable items in UI, require backend validation in real systems | Customer trust depends on reliable checkout decisions. |
+| Notifications | Stream arrival, store list and unread count in Redux | Message priority and quality affect user attention. |
+| Small UI state | Keep local | Over-centralization increases maintenance and governance cost. |
+| Search input | Local display, RxJS debounce, Redux keyword | Search behavior must feel responsive and explainable. |
 
-- Where does this value live?
-- Who can update it?
-- What is derived from it?
-- What happens when updates arrive out of order?
-- Which components depend on it?
+## Management Transfer Card
 
-The same decisions also answer management questions:
-
-- Which team owns this business behavior?
-- Who approves changes to shared state?
-- How are regressions detected?
-- How do teams coordinate cross-feature changes?
-- How is complexity kept visible?
-
-## Example: Cart State
-
-Technical view:
-
-- Cart items should be central state because product cards, cart summary, totals, and checkout-like UI all depend on them.
-
-Management view:
-
-- Cart behavior needs clear ownership because many features may want to add discounts, stock rules, or notifications.
-
-Governance question:
-
-- Who reviews changes that modify cart state shape or cart actions?
-
-## Example: Voucher Validation
-
-Technical view:
-
-- Voucher validation has loading, success, error, and stale-result concerns.
-- RxJS can model timing and cancellation.
-- Redux can store the current validation result.
-
-Management view:
-
-- Voucher rules often belong to a business or growth team.
-- UI teams need stable contracts for voucher status.
-
-Governance question:
-
-- How are voucher rule changes communicated and tested before release?
-
-## Example: Live Stock
-
-Technical view:
-
-- Stock affects product cards, cart quantity, and notifications.
-- Central state prevents conflicting views.
-
-Management view:
-
-- Inventory behavior may be owned by a different team than the shopping UI.
-
-Governance question:
-
-- What happens when inventory state changes while a user is buying?
-
-## Example: Checkout Reliability
-
-Technical view:
-
-- Checkout must check current stock before allowing the user to continue.
-- Frontend validation can block obviously invalid checkout attempts.
-- Backend validation is still required before accepting an order.
-
-Management view:
-
-- Checkout reliability affects customer trust, support volume, refund risk, and revenue reporting.
-- Inventory, checkout, and customer experience teams need shared rules for unavailable items.
-
-Governance question:
-
-- Who owns the final decision when cart state and inventory state disagree?
-
-## Example: Notifications
-
-Technical view:
-
-- Incoming notification events are a stream because they arrive over time.
-- The current notification list and unread count are Redux state because the header and notification center both display them.
-
-Management view:
-
-- Notifications affect user attention, operational messaging, and trust.
-- Message priority, wording, and ownership need clear governance.
-
-Governance question:
-
-- Who decides which events deserve notifications, and who is accountable when notifications are noisy, stale, or misleading?
-
-## Management Transfer Card Template
-
-Use this template to turn a state decision into an architecture and management discussion:
+Use this card for any state decision:
 
 ```text
 Topic:
@@ -116,79 +32,72 @@ Decision owner:
 How we verify it:
 ```
 
-## Example Answers From This App
+## Example Cards
 
 Cart state:
 
 - Technical decision: store cart items in Redux.
-- Why this state lives there: header, cart summary, checkout, and debugging all need one source of truth.
+- Why this state lives there: header, cart summary, checkout validation, and debugging all need one source of truth.
 - Teams or roles affected: frontend, checkout, product, support.
 - Risk if unmanaged: wrong totals, wrong badges, and customer confusion.
 - Backend or governance dependency: checkout must validate final order details.
-- Decision owner: checkout or commerce experience owner.
-- How we verify it: reducer tests, cart UI checks, and checkout validation checks.
+- Decision owner: commerce experience owner.
+- How we verify it: reducer checks, UI checks, and manual checkout scenarios.
 
 Voucher validation:
 
-- Technical decision: process typing with RxJS and store the result in Redux.
+- Technical decision: process typing with RxJS and store result in Redux.
 - Why this state lives there: typing is time-based, but the validation result affects cart totals.
 - Teams or roles affected: growth, pricing, checkout, frontend.
 - Risk if unmanaged: stale discounts, unclear errors, or inconsistent pricing.
 - Backend or governance dependency: real voucher rules must come from a trusted service.
 - Decision owner: pricing or promotion owner.
-- How we verify it: stream timing tests, fake API cases, and cart total checks.
+- How we verify it: voucher cases, fake API checks, and total calculations.
 
 Live stock:
 
 - Technical decision: simulate stock updates with RxJS and store current stock in Redux.
-- Why this state lives there: stock can change without user action and affects product cards and checkout.
+- Why this state lives there: product cards and checkout validation need current availability.
 - Teams or roles affected: inventory, checkout, frontend, customer support.
 - Risk if unmanaged: users may try to buy unavailable items.
 - Backend or governance dependency: backend stock validation is required before accepting orders.
 - Decision owner: inventory or order management owner.
-- How we verify it: stock reducer checks, disabled add-to-cart behavior, and checkout blocking.
+- How we verify it: stock update checks and checkout blocking checks.
 
 Notifications:
 
-- Technical decision: generate simulated events with RxJS and store the list plus unread count in Redux.
-- Why this state lives there: header and notification center need the same unread count and current list.
+- Technical decision: generate simulated events with RxJS and store notification list plus unread count in Redux.
+- Why this state lives there: Header and NotificationCenter need the same current state.
 - Teams or roles affected: product, operations, support, frontend.
-- Risk if unmanaged: noisy or stale messages can train users to ignore important information.
+- Risk if unmanaged: noisy or stale messages reduce trust and attention.
 - Backend or governance dependency: real systems need event ownership, priority rules, and auditability.
 - Decision owner: product operations or customer experience owner.
-- How we verify it: reducer tests, unread count checks, and message display checks.
+- How we verify it: unread count checks and message display checks.
 
 Small UI state:
 
 - Technical decision: keep component-only state local.
-- Why this state lives there: local toggles and draft display values do not need global coordination.
-- Teams or roles affected: mainly the owning frontend feature team.
+- Why this state lives there: local toggles and immediate draft display values do not need global coordination.
+- Teams or roles affected: owning frontend feature team.
 - Risk if unmanaged: Redux becomes noisy and harder to govern.
 - Backend or governance dependency: usually none.
 - Decision owner: feature owner.
 - How we verify it: component behavior checks.
 
-## Open Level-3 Management Questions
+## Level-3 Management Questions
+
+Use these for senior-level discussion:
 
 - Who is allowed to add a new Redux slice?
-- Which state changes require architecture review?
-- Which business rules must be validated on the backend even if the frontend already checks them?
-- Who owns pricing conflicts between voucher state and checkout totals?
-- Who owns inventory conflicts between cart state and stock state?
+- Which state shape changes require architecture review?
+- Which frontend checks must also be validated on the backend?
+- Who owns conflicts between voucher state and checkout totals?
+- Who owns conflicts between cart state and inventory state?
+- Who governs notification priority and message quality?
 - How should teams communicate changes to shared selectors, action names, or state shape?
 - What telemetry would reveal state mismatch problems in production?
-- Which customer promise is implied when checkout is enabled?
-
-## Discussion Prompts
-
-- What state should require architectural review before changing?
-- What state can feature teams own independently?
-- What selector or action names become shared contracts?
-- What tests protect teams from breaking each other?
-- How can a team prevent the Redux store from becoming a dumping ground?
-- What customer promise is being made when checkout is enabled?
-- Who governs notification priority and message quality?
+- What customer promise is implied when checkout is enabled?
 
 ## Training Takeaway
 
-State management is not only a coding pattern. It is a decision system for ownership, predictability, communication, and change control.
+State management is not only a coding technique. It is a decision system for ownership, predictability, communication, customer trust, and change control.

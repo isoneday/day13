@@ -4,48 +4,61 @@
 
 ShopSphere Day 13
 
-## Summary
+## Case Context
 
-ShopSphere Day 13 is a mini online shop used to teach frontend state management. The app should feel familiar enough for participants to understand quickly: browse products, search, add items to a cart, apply a voucher, watch stock change, and see notifications.
+ShopSphere is a fictional mini online shop for kitchenware and meal-prep products. Participants work with a familiar ecommerce flow: browse products, search, add to cart, apply a voucher, respond to changing stock, and receive notifications.
 
-The important output is not a complete shop. The important output is a clear training environment where state decisions are visible.
+The shop is deliberately small. It is a classroom case for state management, not a production commerce platform.
 
-## Audience
+## Day 13 Learning Goals
 
-This project is for frontend training participants who already understand basic React components and props, and are ready to practice state management patterns.
+Participants should learn to:
 
-## Training Focus
+- Separate local state, Redux state, RxJS streams, and derived UI state.
+- Explain why shared business state needs a single source of truth.
+- Trace Redux actions, reducers, store updates, selectors, and UI re-renders.
+- Use RxJS for timing-sensitive flows such as debounced search, voucher validation, live stock updates, and notifications.
+- Recognize duplicated state bugs.
+- Discuss how frontend state decisions become architecture and management decisions.
 
-- What should be local state?
-- What becomes shared state?
-- When does central state help?
-- How do Redux actions and reducers update the UI?
-- Where do RxJS streams improve event handling?
-- How do state decisions affect team ownership and governance?
+## Participant Role
 
-## App Boundaries
+Participants act as frontend engineers joining a product team. Their job is to inspect the app, reason about state ownership, make small changes, and explain the tradeoffs behind those changes.
 
-Include:
+They are not building a full ecommerce system. They are practicing architectural judgment with a focused training app.
 
-- Product list using local demo data
-- Search input
-- Cart interactions
-- Voucher validation simulation
-- Stock update simulation
-- Notification stream
-- Clear state examples for training discussion
+## Included Scope
 
-Do not include:
+- Local demo product data
+- Product list and category filter
+- Debounced RxJS search
+- Redux cart flow
+- Fake voucher validation API
+- RxJS voucher validation stream
+- Live stock simulation
+- Checkout stock validation
+- Notification Center assignment
+- Debug and architecture teaching panels
+
+## Out Of Scope
 
 - Backend service
 - Database
-- Login or user accounts
-- Payment checkout
+- Login or accounts
+- Real payment checkout
 - Real inventory API
 - Real voucher API
+- Browser push notifications
 - Complex routing
-- UI framework
+- Production ecommerce rules
 
 ## Success Criteria
 
-The finished training app should let participants trace a user action from the UI to state changes and back to the UI. Instructors should be able to pause at each state management decision and explain why the chosen state location is appropriate.
+The session is successful when participants can point to a behavior in the UI and explain:
+
+1. What event happened.
+2. Where state lives.
+3. Whether RxJS is involved.
+4. How Redux state changes.
+5. What UI is derived from that state.
+6. What architecture or management risk the decision creates.

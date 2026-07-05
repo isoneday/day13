@@ -1,10 +1,10 @@
 # Test Plan
 
-## Test Strategy
+## Strategy
 
-ShopSphere Day 13 uses lightweight verification because it is a teaching app. Manual checks are the primary classroom test method. A small Node verification script checks core reducer and fake API behavior without adding a large test framework.
+This training app uses manual verification plus one lightweight script. There is no heavy test framework because the project is optimized for classroom readability.
 
-## Commands
+## Required Commands
 
 Install dependencies when needed:
 
@@ -12,69 +12,66 @@ Install dependencies when needed:
 npm install
 ```
 
-Run the app:
-
-```bash
-npm run dev
-```
-
-Build the app:
-
-```bash
-npm run build
-```
-
-Run lightweight state verification:
+Run verification:
 
 ```bash
 npm run verify
 ```
 
-## Manual Test Cases
+Build:
+
+```bash
+npm run build
+```
+
+Run locally:
+
+```bash
+npm run dev
+```
+
+## Manual Verification Steps
 
 ### Product List Rendering
 
-1. Run `npm run dev`.
-2. Open the Vite local URL.
-3. Confirm five kitchenware or meal-prep products are visible.
-4. Confirm each product shows name, category, price, and stock.
+1. Open the app.
+2. Confirm five kitchenware or meal-prep products render.
+3. Confirm each product shows name, category, price, and stock.
 
-Expected result: the product list renders from local demo data.
+Expected result: products render from local demo data.
 
 ### Category Filter
 
-1. Open the category dropdown.
-2. Select `Storage`.
-3. Confirm only storage products are visible.
-4. Select `All`.
+1. Select `Storage`.
+2. Confirm only storage products are visible.
+3. Select `All`.
 
-Expected result: category filtering updates the visible product list.
+Expected result: category state updates and the full list returns.
 
 ### RxJS Debounced Search
 
-1. Type `glass` in the search input.
-2. Watch the input update immediately.
-3. Watch `Redux search keyword` update after a short delay.
-4. Confirm the visible product list filters after the debounce.
-5. Clear the search input.
+1. Type `glass`.
+2. Confirm the input changes immediately.
+3. Confirm `Redux search keyword` updates after the debounce.
+4. Confirm products filter after the Redux keyword changes.
 
-Expected result: local input changes immediately, Redux keyword updates after debounce, and products filter from Redux state.
+Expected result: local input is immediate; Redux search keyword is delayed and stable.
 
 ### Add To Cart
 
-1. Click `Add to cart` on any in-stock product.
-2. Check Cart Summary.
-3. Add the same product again.
+1. Click `Add to cart` on an in-stock product.
+2. Add the same product again.
+3. Check Cart Summary.
 
-Expected result: the cart item appears and quantity increases on repeated add.
+Expected result: cart item appears and quantity increases.
 
 ### Cart Badge Update
 
-1. Add one product to the cart.
-2. Check the header cart badge.
-3. Add another product.
+1. Add products to cart.
+2. Check Header cart badge.
+3. Compare with Debug Panel `cart.items`.
 
-Expected result: the header cart badge matches the total cart quantity.
+Expected result: Header cart badge matches Redux cart quantity.
 
 ### Checkout Empty Cart Error
 
@@ -85,89 +82,95 @@ Expected result: Cart Summary shows `Add at least one product before checkout.`
 
 ### Voucher SAVE20
 
-1. Add at least one product to the cart.
-2. Type `SAVE20` in the voucher field.
+1. Add a product to cart.
+2. Type `SAVE20`.
 3. Wait for validation.
 
-Expected result: voucher status becomes `valid`, message confirms 20% off, and final price includes a 20% discount.
+Expected result: voucher status is `valid`, discount is 20%, and final price is reduced.
 
 ### Voucher FOOD10
 
-1. Replace the voucher code with `FOOD10`.
+1. Type `FOOD10`.
 2. Wait for validation.
 
-Expected result: voucher status becomes `valid`, message confirms 10% off, and final price includes a 10% discount.
+Expected result: voucher status is `valid`, discount is 10%, and final price is reduced.
 
 ### Invalid Voucher
 
-1. Type an unknown code such as `NOPE`.
+1. Type `NOPE`.
 2. Wait for validation.
 
-Expected result: voucher status becomes `invalid` and the UI shows an invalid voucher message.
+Expected result: voucher status is `invalid` and the invalid message appears.
 
 ### ERROR Voucher
 
 1. Type `ERROR`.
 2. Wait for validation.
 
-Expected result: voucher status becomes `error` and the UI shows the simulated service error.
+Expected result: voucher status is `error` and the simulated service error appears.
 
 ### Live Stock Update
 
-1. Watch the Live Stock Simulator panel.
+1. Watch the Live Stock Simulator.
 2. Wait at least 5 seconds.
-3. Confirm `Last stock update` changes.
-4. Check product cards and Debug Panel.
+3. Check product stock and Debug Panel `products.lastStockUpdate`.
 
-Expected result: one product stock changes automatically and Redux product state reflects the update.
+Expected result: one product stock changes and state updates.
 
-### Checkout Blocked When Stock Unavailable
+### Checkout Blocked When Stock Is Unavailable
 
 1. Add a product to cart.
-2. Wait for live stock updates until that product reaches `0`, or use Redux DevTools during instruction to set that product stock to `0`.
+2. Wait until that product reaches stock `0`, or use Redux DevTools during instruction to set its stock to `0`.
 3. Check Cart Summary.
 
-Expected result: Cart Summary shows a checkout blocked warning, and `Start checkout` is disabled until unavailable items are removed.
+Expected result: warning appears and `Start checkout` is disabled.
 
 ### Notification Center
 
 1. Wait at least 8 seconds.
-2. Confirm a notification appears in Notification Center.
-3. Confirm the header unread notification count increases.
+2. Confirm a notification appears.
+3. Confirm Header unread notification count increases.
 4. Click `Mark all as read`.
 
-Expected result: notifications are stored in Redux, unread count appears in the header, and marking all as read resets unread count to `0`.
+Expected result: unread count resets to `0`, and notification items are marked read.
 
-## Teaching Panels
+### Debug Panel
 
-### Redux Debug Panel
+1. Interact with search, cart, voucher, stock, and notifications.
+2. Inspect matching Redux slices.
 
-1. Interact with cart, product search, voucher, stock, and notifications.
-2. Observe the matching Redux slices.
-
-Expected result: the panel shows live state changes for classroom explanation.
+Expected result: Debug Panel reflects live Redux state.
 
 ### Buggy Cart Badge
 
-1. Add products to the cart.
-2. Compare Redux cart quantity with the incorrect local cart count.
+1. Add products to cart.
+2. Compare real Redux cart quantity with incorrect local cart count.
 
-Expected result: the mismatch remains visible as a deliberate debugging exercise.
+Expected result: mismatch remains visible as a deliberate teaching bug.
 
-## Future Automated Tests
+## Lightweight Verification Script
 
-If a test framework is added later, prioritize:
+`npm run verify` checks:
 
-- Reducer behavior for cart, products, voucher, and notifications.
-- Selector behavior for cart totals and product availability.
-- RxJS stream timing for search, voucher validation, stock updates, and notifications.
-- Checkout blocking behavior when stock becomes unavailable.
+- Empty checkout error
+- Cart item quantity increment
+- Stock clamping at `0`
+- Voucher API results for `SAVE20`, `FOOD10`, invalid codes, and `ERROR`
+- Voucher reducer success state
+- Notification unread count increment and reset
 
 ## Acceptance Criteria
 
-The app is ready for training when:
+Before classroom use:
 
-1. `npm run build` passes.
-2. `npm run verify` passes.
-3. Manual test cases can be demonstrated in class.
-4. Participants can trace whether each behavior uses local state, Redux, RxJS, or derived UI state.
+1. `npm run verify` passes.
+2. `npm run build` passes.
+3. Manual checks are understood by the instructor.
+4. Known limitations are explained to participants.
+
+## Known Limitations
+
+- No automated browser tests.
+- RxJS timing is mainly verified manually.
+- Live stock and notifications are random simulations.
+- No backend validation is implemented.

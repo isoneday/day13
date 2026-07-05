@@ -2,153 +2,155 @@
 
 ## Architecture Goal
 
-The architecture should be small, explicit, and easy to teach. The app should show state boundaries clearly rather than hide them behind generic abstractions.
+The architecture is small, explicit, and easy to teach. The app favors readable components and visible state boundaries over production abstractions.
 
-## Planned Layers
+## Folder Structure
 
 ```text
-React UI components
-  -> local component state for isolated UI details
-  -> React Redux hooks for central shop state
-  -> RxJS subscriptions for reactive event flows
-
-Redux Toolkit store
-  -> product state
-  -> cart state
-  -> voucher state
-  -> stock availability in product state
-  -> notification state later
-
-RxJS streams
-  -> debounced search input
-  -> voucher validation simulation
-  -> live stock simulation
-  -> notification timing
-
-Local demo data
-  -> products and sample vouchers
+src/
+  app/
+    store.js
+  components/
+    ArchitectureDecisionPanel.jsx
+    BuggyCartBadge.jsx
+    CartSummary.jsx
+    DebugPanel.jsx
+    Header.jsx
+    LiveStockSimulator.jsx
+    NotificationCenter.jsx
+    ProductCard.jsx
+    ProductList.jsx
+    ProductSearch.jsx
+    VoucherBox.jsx
+  data/
+    products.js
+  features/
+    cart/
+      cartSlice.js
+    notifications/
+      notificationsSlice.js
+    products/
+      productsSlice.js
+    voucher/
+      voucherSlice.js
+  services/
+    fakeApi.js
 ```
 
-## State Ownership Guide
+## Redux Store Structure
+
+The Redux store is configured in `src/app/store.js`.
+
+```text
+store
+  products
+    items
+    selectedCategory
+    searchKeyword
+    loading
+    error
+    lastStockUpdate
+  cart
+    items
+    checkoutStep
+    error
+  voucher
+    code
+    status
+    discountPercent
+    message
+    error
+  notifications
+    items
+    unreadCount
+```
+
+## Local Vs Central State
 
 Use local React state for:
 
-- Input text before it becomes a shared concern
-- UI toggles
-- Selected tab or small view-only state
-- Temporary component-only values
+- Immediate search input display
+- Component-only draft values
+- Small UI toggles or local display details
 
 Use Redux for:
 
-- Product list state used by multiple components
-- Cart items and totals
+- Product catalog and current stock
+- Category and stable search keyword
+- Cart items and checkout state
 - Voucher validation result
-- Stock values shown across the app
-- Notifications that may be triggered from different features
+- Notification list and unread count
 
-Use RxJS for:
+Use derived UI state for:
 
-- Debounced search changes
-- Simulated async voucher validation
-- Periodic stock updates
-- Timed notification arrival
-- Streams where cancellation or timing is part of the lesson
+- Filtered product list
+- Cart total quantity
+- Cart subtotal, discount amount, and final total
+- Checkout blocked state
+- Out-of-stock button state
 
-## Suggested Redux Slices
+Do not store derived arrays or totals unless the lesson explicitly requires it.
 
-- `productsSlice`: stores product catalog, selected category, search keyword, stock availability, loading, error state, and the last stock update time.
-- `cartSlice`: stores cart items, checkout step, and cart error state.
-- `voucherSlice`: stores voucher input, validation status, discount, and error message.
-- `stockSlice`: stores stock counts and live update status.
-- `notificationsSlice`: stores notification items and unread count.
+## RxJS Stream Decisions
 
-## Current Milestone: Product List And Cart
+RxJS is used only where timing matters:
 
-The first implemented milestone uses Redux Toolkit for the basic shop loop:
+- `ProductSearch`: typing is debounced before updating the stable Redux search keyword.
+- `VoucherBox`: voucher input is debounced, validated through a fake Promise API, and protected from stale responses with `switchMap`.
+- `LiveStockSimulator`: stock changes arrive as simulated system events every 5 seconds.
+- `NotificationCenter`: notifications arrive as simulated events every 8 seconds.
 
-```text
-ProductCard button click
-  -> dispatch(cartItemAdded(product))
-  -> cart reducer adds or increments an item
-  -> Redux store updates cart.items
-  -> Header cart badge and CartSummary re-render from useSelector
-```
+Redux stores the current business result of those streams. RxJS manages event timing; Redux owns the durable state the UI reads.
 
-Product filtering uses Redux state for the stable filter values:
+## Key Flows
+
+Product search:
 
 ```text
-Category select
-  -> dispatch(categorySelected(value))
-  -> products reducer updates selectedCategory
-  -> ProductList reads Redux state and displays matching products
-
-Search input typing
-  -> ProductSearch updates local input state immediately
-  -> ProductSearch sends values through an RxJS Subject
-  -> debounceTime(400) waits for typing to pause
-  -> dispatch(searchKeywordChanged(keyword))
-  -> products reducer stores the stable search keyword
-  -> ProductList derives visible products from Redux state
+local input state
+  -> RxJS Subject
+  -> debounceTime(400)
+  -> searchKeywordChanged
+  -> products.searchKeyword
+  -> ProductList derives visible products
 ```
 
-Search typing is a stream because each keystroke is an event over time. The product filter is shared feature state because the active keyword is useful for the product list, Debug Panel, and teaching flow. The product list result is not stored separately; it is derived in the UI from `items`, `selectedCategory`, and `searchKeyword`.
-
-## Live Stock Simulation Flow
-
-Stock availability can change because of system events, not only user clicks:
+Voucher validation:
 
 ```text
-RxJS interval(5000)
-  -> LiveStockSimulator selects one random product
-  -> simulator calculates the next stock and prevents values below 0
-  -> dispatch(productStockUpdated({ productId, stock, updatedAt }))
-  -> productsSlice stores the current stock and lastStockUpdate
-  -> ProductCard, ProductList, and DebugPanel re-render from Redux state
+voucher input
+  -> voucherInputChanged
+  -> RxJS Subject
+  -> debounceTime(500)
+  -> switchMap(validateVoucherApi)
+  -> voucherValidationSucceeded / Failed / Errored
+  -> voucher state affects CartSummary totals
 ```
 
-The stock update event is a stream because it happens over time without direct user input. The current stock value is Redux state because multiple UI areas need the same answer. The visible product list is still derived from state; it is not stored as a separate result.
-
-This is only a frontend simulation. A real shop would validate stock on the backend before accepting checkout, because frontend stock can be stale or manipulated.
-
-## Voucher Validation Flow
-
-Voucher validation is split between an RxJS stream and Redux state:
+Live stock:
 
 ```text
-Voucher input event
-  -> VoucherBox dispatches voucherInputChanged(value)
-  -> VoucherBox sends value to an RxJS Subject
-  -> RxJS handles debounce, duplicate values, cancellation, and fake API calls
-  -> dispatch voucher validation actions
-  -> voucherSlice stores the latest result
-  -> CartSummary and DebugPanel read voucher state from Redux
+interval(5000)
+  -> random product stock update
+  -> productStockUpdated
+  -> product cards and checkout validation update
 ```
 
-The voucher input is a stream because typing and validation are time-based. Users may type quickly, change a code before validation finishes, or trigger a simulated service error. RxJS makes those timing and cancellation rules visible for teaching.
+Notifications:
 
-The voucher result belongs in Redux because it is business-relevant shared state. Cart totals, checkout messaging, and the Debug Panel all need the same current answer: the code, status, discount percent, message, and error.
+```text
+interval(8000)
+  -> notificationReceived
+  -> notifications.items and unreadCount
+  -> Header badge and NotificationCenter update
+```
 
-RxJS and Redux have different jobs here:
+## Known Simplifications
 
-- RxJS manages the event process: wait for typing to pause, ignore repeated values, call the fake API, and ignore stale requests with `switchMap`.
-- Redux stores the current business state: what code was typed, whether validation is idle, typing, validating, valid, invalid, or error, and what discount should affect cart totals.
-
-The current fake API is `validateVoucherApi(code)`. It supports:
-
-- `SAVE20`: valid with 20% discount
-- `FOOD10`: valid with 10% discount
-- `ERROR`: simulated service error
-- Any other code: invalid
-
-## Teaching Note
-
-Not every piece of state belongs in Redux. The lesson should include examples where local state is the better choice. Central state is useful when many components need the same truth, when updates must be predictable, or when debugging and governance matter.
-
-## Non-Goals
-
-- Server-side rendering
-- Persistent storage
-- Complex middleware setup
-- Enterprise ecommerce modeling
-- Authentication or authorization
-- Real network integration
+- There is no backend.
+- Stock, voucher, and notification events are simulated in the browser.
+- Checkout does not place an order.
+- Frontend checkout validation is only a teaching aid; real systems need backend validation.
+- There is no persistence across page reloads.
+- The Buggy Cart Badge is intentionally incorrect for a debugging exercise.
+- The app uses simple CSS and no UI component library.

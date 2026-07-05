@@ -2,100 +2,102 @@
 
 ## Teaching Goal
 
-Use ShopSphere Day 13 to help participants reason about state placement. The goal is not to memorize Redux or RxJS syntax. The goal is to make state ownership decisions visible and defensible.
+Use ShopSphere Day 13 to help participants make state ownership decisions. The point is not to memorize Redux or RxJS syntax. The point is to make state placement, update flow, and risk visible.
 
-## Recommended Timing
+## Suggested Session Timing
 
-- 10 minutes: state identification
-- 15 minutes: local state examples
-- 20 minutes: Redux store and cart flow
-- 20 minutes: RxJS search and voucher streams
-- 15 minutes: stock and notifications
-- 10 minutes: management transfer discussion
+- 10 minutes: case setup and state identification
+- 20 minutes: product list, cart, and Redux Debug Panel
+- 15 minutes: debounced search
+- 20 minutes: voucher validation stream
+- 15 minutes: live stock and checkout validation
+- 15 minutes: duplicated state debugging and notifications assignment
+- 15 minutes: architecture decision and management transfer debrief
 
 Adjust timing based on participant experience.
 
-## Key Concepts To Reinforce
+## Teaching Narration
 
-- Local state is not inferior. It is often the simplest correct choice.
-- Shared state creates coordination pressure.
-- Redux centralizes important shared state and makes updates traceable.
-- Reducers should be predictable and easy to test.
-- Selectors protect components from store shape details.
-- RxJS is useful for event timing, cancellation, merging, and simulation.
-- Technical state decisions become architecture and governance decisions as teams grow.
+Open with:
 
-## Suggested Demonstrations
+“This is a small shop, but it contains the same state questions that appear in larger systems. We will not make it production-ready. We will use it to practice deciding where state belongs.”
 
-### Demo 1: Search Text
+When introducing Redux:
 
-Show search as local state first. Then explain what changes when other components need to know the search term or results.
+“Redux is useful here because cart, voucher result, stock availability, and notifications are shared or business-relevant. We are not moving every UI detail into Redux.”
 
-### Demo 2: Cart Count
+When introducing RxJS:
 
-Add an item from a product card and show the cart count in the header. This demonstrates why cart state should be central.
+“RxJS is not the state owner. RxJS handles events over time: typing pauses, validation requests, stock updates, and notification arrivals.”
 
-### Demo 3: Voucher Validation
+When introducing management transfer:
 
-Use a simulated delay and show loading, success, and failure states. Emphasize why stale validations should not overwrite the latest input.
+“State placement is not just code structure. It decides ownership, testing boundaries, failure modes, and the customer promise.”
 
-### Demo 4: Live Stock
+## Demonstration Path
 
-Simulate stock changing while the cart is open. Discuss why derived UI state must respond to central stock changes.
+1. Product and cart: show the action, reducer, store update, and UI re-render.
+2. Debug Panel: show live Redux state after each interaction.
+3. Search: contrast immediate local input with delayed Redux keyword.
+4. Voucher: demonstrate `SAVE20`, `FOOD10`, invalid code, and `ERROR`.
+5. Live stock: wait for automatic system updates.
+6. Checkout validation: show why frontend validation helps but is not final.
+7. Buggy Cart Badge: let participants diagnose duplicated state.
+8. Notification Center: frame it as the final extension feature.
+9. Architecture Decision Panel: debrief state decisions as management decisions.
 
-### Demo 5: Architecture Decision Panel
+## Facilitation Notes
 
-Use the panel after participants have seen cart, voucher, search, stock, and the bug simulation. Walk row by row and ask participants to identify the technical decision, the reason, and the unmanaged risk.
+- Keep the app small. Redirect backend, payment, login, and routing ideas to future architecture discussions.
+- Ask participants to describe flows aloud before reading code.
+- Use the Debug Panel to verify claims about Redux state.
+- Do not hide the deliberate bug. It is useful for the single-source-of-truth discussion.
+- Emphasize that frontend simulations are not production guarantees.
+- Encourage participants to say “derived” when a value can be calculated from existing state.
 
-Debrief prompts:
+## Common Mistakes
 
-- Which rows are local state, Redux state, or RxJS streams?
-- Which rows also require backend validation?
-- Which risks are technical bugs, and which become customer trust or revenue risks?
-- Who should own each decision in a real team?
-- What tests or governance checks would keep the decision reliable?
+- Moving all state into Redux because Redux exists.
+- Keeping shared business state in local component state.
+- Duplicating derived totals or counts.
+- Treating RxJS as a replacement for Redux.
+- Putting timing or async behavior inside reducers.
+- Trusting frontend stock validation as final checkout validation.
+- Ignoring governance questions for shared state changes.
 
-Close the debrief by connecting the panel to management transfer: state placement is not only an implementation choice. It defines ownership, review boundaries, failure modes, and the customer promise behind checkout.
+## Expected Solution Points
 
-### Demo 6: Notification Center Assignment
+Participants should identify:
 
-Use the Notification Center as the final participant assignment. It is intentionally small enough to inspect in one pass and extend safely.
+- Cart state belongs in Redux.
+- Search input display is local, but the stable search keyword is Redux state.
+- Voucher typing is a stream, while voucher result is Redux state.
+- Stock updates are system-event streams, while current stock is Redux state.
+- Notifications are streams when they arrive and Redux state after they are stored.
+- The Buggy Cart Badge is wrong because it duplicates cart count locally.
+- Checkout needs backend validation in real systems.
 
-Expected solution points:
+## Debrief Questions
 
-- `interval(8000)` is the stream source.
-- `notificationReceived` stores each event in Redux.
-- `unreadCount` changes in the reducer, not in component-local state.
-- `Header` reads unread count with `useSelector`.
-- `NotificationCenter` dispatches `allNotificationsMarkedRead`.
-- No backend, browser push API, or external library is required.
+- Which feature shows local state as the best choice?
+- Which feature clearly needs central state?
+- Which behavior would be awkward without RxJS?
+- What state should require architecture review?
+- What business risk appears if cart, stock, or voucher state is wrong?
+- Who owns notification rules and message quality?
+- What would you test before using this pattern in a real product?
 
-Debrief prompts:
+## Instructor Preparation Checklist
 
-- Why is the incoming notification event a stream?
-- Why is the notification list Redux state?
-- What could go wrong if unread count were duplicated in local state?
-- Which team owns notification rules, message wording, and priority?
-- What would need backend support in a real system?
+Before class:
 
-## Questions For Participants
+1. Run `npm install` if dependencies are missing.
+2. Run `npm run build`.
+3. Run `npm run verify`.
+4. Open the app with `npm run dev`.
+5. Review [TEST_PLAN.md](TEST_PLAN.md).
+6. Decide whether to use Redux DevTools for the checkout stock validation scenario.
 
-- Which state can stay inside one component?
-- Which state needs a single source of truth?
-- What should be derived instead of stored?
-- What user actions should become Redux actions?
-- Which flows need stream behavior?
-- What risks appear if every feature writes to the same central state?
+## Closing Message
 
-## Common Mistakes To Watch For
-
-- Moving all state into Redux too early.
-- Duplicating derived values in the store.
-- Putting async or timing logic directly inside reducers.
-- Making RxJS responsible for state that Redux should own.
-- Creating large components that hide state changes.
-- Treating demo ecommerce rules as production requirements.
-
-## Facilitation Note
-
-Keep the app small. If participants ask for payments, login, backend APIs, or persistence, frame those as future architecture topics and return to the state management lesson.
+End with: “Good state management is not about putting everything in one place. It is about knowing which state needs which owner, which events need stream handling, and which decisions create risk for the team or business.”
