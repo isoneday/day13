@@ -1,90 +1,114 @@
 # AGENTS.md
 
-Guidance for future Codex tasks in the ShopSphere Day 13 project.
+Durable guidance for Codex tasks in the **ShopSphere Day 13** repository.
 
-## Project Purpose
+For supporting context, read [README.md](README.md) and [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) before making broad implementation or architecture changes.
 
-This repository is a Day 13 training project for frontend state management. The application name is **ShopSphere Day 13**.
+## 1. Project Purpose
 
-The goal is to teach:
+ShopSphere Day 13 is a teaching-focused mini online shop for practicing frontend state management. The project should help participants understand local state, shared state, Redux central state, RxJS reactive streams, and the management implications of state ownership.
 
-- Local state vs shared state vs central state
-- Redux Toolkit store, actions, reducers, selectors, and UI updates
-- React Redux integration
-- RxJS streams for search, voucher validation, live stock simulation, and notifications
-- Management transfer from technical state decisions to architecture and governance
+This is a training project, not a production ecommerce system.
 
-## Hard Constraints
+## 2. Tech Stack
 
-- Use React with Vite.
-- Use plain JavaScript, not TypeScript.
-- Use Redux Toolkit and React Redux for central state.
-- Use RxJS only where reactive streams make the lesson clearer.
-- Use simple CSS, no UI framework.
-- Keep all documentation and UI text in English.
-- Do not add a backend, database, authentication service, payment flow, or external API.
-- Do not over-engineer. This is a training app, not a production ecommerce system.
+- React
+- Vite
+- Plain JavaScript, not TypeScript
+- Redux Toolkit
+- React Redux
+- RxJS
+- Simple CSS
 
-## Implementation Style
+Use only the libraries needed for the lesson. Do not add unnecessary dependencies.
 
-- Prefer small readable components.
-- Keep state ownership explicit.
-- Use local state for isolated UI details.
-- Use Redux for shared shop state such as products, cart, voucher status, and stock.
-- Use RxJS for event streams that benefit from debouncing, timing, cancellation, merging, or simulation.
-- Keep demo data in local files.
-- Add comments only when they teach a state management idea or clarify non-obvious stream behavior.
+## 3. Folder Conventions
 
-## Suggested Future Structure
-
-When the app is scaffolded, prefer a simple structure similar to:
+Prefer a simple structure:
 
 ```text
 src/
   app/
     store.js
+  components/
   data/
-    products.js
   features/
     cart/
     products/
     voucher/
-    notifications/
     stock/
+    notifications/
+    checkout/
   streams/
-  components/
   styles/
+docs/
 ```
 
-This structure is guidance, not a requirement. Match the actual codebase once it exists.
+Keep feature code close to the feature it supports. Keep demo data local in the repository.
 
-## Teaching Requirements
+## 4. Coding Standards
 
-Future changes should preserve the learning path:
+- Use clear component names that describe the UI or feature.
+- Prefer small readable components.
+- Write code for teaching clarity, not advanced abstraction.
+- Keep business logic easy to trace from UI event to state update to UI result.
+- Add comments only where they help learning or clarify non-obvious state or stream behavior.
+- Keep all UI text and documentation in English.
+- Use simple CSS and avoid UI frameworks.
 
-1. Start with local state.
-2. Introduce shared state pressure.
-3. Move appropriate state into Redux.
-4. Add RxJS for reactive flows.
-5. Discuss management and governance implications.
+## 5. State Management Rules
 
-Avoid hiding important concepts behind large abstractions. Participants should be able to trace state changes by reading the code.
+- Do not put every UI state into Redux.
+- Keep small UI state local, such as open panels, selected tabs, input draft values, and component-only toggles.
+- Use Redux Toolkit for central state that is shared, business-relevant, or needed across features.
+- Keep cart, voucher result, stock availability, checkout state, and notifications in Redux when they are shared or business-relevant.
+- Prefer selectors for derived values such as cart count, subtotal, discounts, and availability.
+- Keep reducers predictable and easy to test.
+- Do not duplicate derived state unless there is a clear teaching reason.
 
-## Documentation Rules
+## 6. RxJS Usage Rules
 
-- Update documentation when architecture or learning flow changes.
-- Keep docs practical and concise.
-- Include teaching notes where they help instructors explain tradeoffs.
-- Avoid empty placeholders.
+- Use RxJS only for event streams or asynchronous flows where timing matters.
+- Good uses include debounced search, voucher validation simulation, live stock updates, notification timing, cancellation, and merging event streams.
+- Do not use RxJS as a replacement for Redux state ownership.
+- Do not add streams for simple synchronous UI state.
+- Keep stream code readable and scoped to the teaching scenario.
 
-## Testing Expectations
+## 7. Documentation Rules
 
-When tests are introduced, keep them focused on state behavior:
+- Update documentation when project structure, architecture, or learning flow changes.
+- Keep documentation concise, practical, and in English.
+- Add teaching notes when they explain tradeoffs.
+- Do not leave empty placeholders.
+- Keep README.md useful for setup, purpose, and learning objectives.
+- Keep docs/ARCHITECTURE.md aligned with actual state ownership and stream design.
 
-- Reducer behavior
-- Selector output
-- Cart state transitions
-- Voucher validation states
-- Stream behavior for debounce, cancellation, and simulated updates
+## 8. Testing And Verification Expectations
 
-Manual testing notes are acceptable early in the project.
+- Verify user-facing behavior after changes when the app exists.
+- Add or update tests for reducers, selectors, and stream behavior when those areas change.
+- Prefer focused tests over broad brittle tests.
+- Check cart transitions, voucher states, stock availability, checkout state, notifications, and search stream behavior.
+- If tests cannot be run, state that clearly in the final response.
+
+## 9. Do-Not Rules
+
+- Do not create a backend.
+- Do not add a database.
+- Do not add authentication, payments, or external APIs.
+- Do not convert the project to TypeScript.
+- Do not add unnecessary libraries or UI frameworks.
+- Do not over-engineer with generic architecture patterns.
+- Do not hide the learning path behind large abstractions.
+- Do not mix unrelated refactors into focused training tasks.
+
+## 10. Definition Of Done
+
+A task is done when:
+
+- The requested change is implemented within the training scope.
+- State ownership follows the local state, Redux, and RxJS rules above.
+- Code remains readable for participants.
+- Relevant documentation is updated.
+- Relevant tests or manual verification have been run, or limitations are clearly reported.
+- No backend, unnecessary library, or out-of-scope production feature was introduced.
