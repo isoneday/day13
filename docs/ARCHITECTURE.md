@@ -15,9 +15,9 @@ React UI components
 Redux Toolkit store
   -> product state
   -> cart state
-  -> voucher state
-  -> stock state
-  -> notification state
+  -> voucher state later
+  -> stock state later
+  -> notification state later
 
 RxJS streams
   -> debounced search input
@@ -56,11 +56,34 @@ Use RxJS for:
 
 ## Suggested Redux Slices
 
-- `productsSlice`: stores product catalog and search result metadata if needed.
-- `cartSlice`: stores cart items, quantities, and cart actions.
+- `productsSlice`: stores product catalog, selected category, search keyword, loading, and error state.
+- `cartSlice`: stores cart items, checkout step, and cart error state.
 - `voucherSlice`: stores voucher input, validation status, discount, and error message.
 - `stockSlice`: stores stock counts and live update status.
 - `notificationsSlice`: stores visible notification messages.
+
+## Current Milestone: Product List And Cart
+
+The first implemented milestone uses Redux Toolkit for the basic shop loop:
+
+```text
+ProductCard button click
+  -> dispatch(cartItemAdded(product))
+  -> cart reducer adds or increments an item
+  -> Redux store updates cart.items
+  -> Header cart badge and CartSummary re-render from useSelector
+```
+
+Product filtering also uses Redux state:
+
+```text
+Category select or search input
+  -> dispatch(categorySelected(value)) or dispatch(searchKeywordChanged(value))
+  -> products reducer updates selectedCategory or searchKeyword
+  -> ProductList reads Redux state and displays matching products
+```
+
+This milestone does not use RxJS yet. Search is intentionally simple Redux state first so participants can learn the central store flow before adding reactive streams.
 
 ## Teaching Note
 

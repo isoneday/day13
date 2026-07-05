@@ -62,6 +62,26 @@ Recommended exercise:
 - Implement `changeQuantity`.
 - Display cart total from a selector.
 
+### Teaching Explanation: Product List And Cart
+
+The current app demonstrates the basic Redux loop with the cart:
+
+1. The user clicks **Add to cart** on a product card.
+2. `ProductCard` dispatches the `cartItemAdded` action.
+3. `cartSlice` receives the action and updates `cart.items`.
+4. The Redux store now has a new cart state.
+5. `Header` and `CartSummary` read cart state with `useSelector`.
+6. React re-renders the cart badge, item list, total quantity, and total price.
+
+The product filters use the same pattern:
+
+1. The user changes the category or search field.
+2. `ProductList` dispatches a products action.
+3. `productsSlice` stores the selected category or search keyword.
+4. `ProductList` reads that state and displays the matching products.
+
+Teaching note: this milestone uses plain Redux state for search on purpose. RxJS will be introduced later when timing behavior, such as debouncing, becomes part of the lesson.
+
 ## Part 5: RxJS Search Stream
 
 Use RxJS to model search input as a stream:
