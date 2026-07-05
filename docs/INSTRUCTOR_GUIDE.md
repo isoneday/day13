@@ -57,6 +57,27 @@ Debrief prompts:
 
 Close the debrief by connecting the panel to management transfer: state placement is not only an implementation choice. It defines ownership, review boundaries, failure modes, and the customer promise behind checkout.
 
+### Demo 6: Notification Center Assignment
+
+Use the Notification Center as the final participant assignment. It is intentionally small enough to inspect in one pass and extend safely.
+
+Expected solution points:
+
+- `interval(8000)` is the stream source.
+- `notificationReceived` stores each event in Redux.
+- `unreadCount` changes in the reducer, not in component-local state.
+- `Header` reads unread count with `useSelector`.
+- `NotificationCenter` dispatches `allNotificationsMarkedRead`.
+- No backend, browser push API, or external library is required.
+
+Debrief prompts:
+
+- Why is the incoming notification event a stream?
+- Why is the notification list Redux state?
+- What could go wrong if unread count were duplicated in local state?
+- Which team owns notification rules, message wording, and priority?
+- What would need backend support in a real system?
+
 ## Questions For Participants
 
 - Which state can stay inside one component?

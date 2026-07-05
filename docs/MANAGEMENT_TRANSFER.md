@@ -85,6 +85,22 @@ Governance question:
 
 - Who owns the final decision when cart state and inventory state disagree?
 
+## Example: Notifications
+
+Technical view:
+
+- Incoming notification events are a stream because they arrive over time.
+- The current notification list and unread count are Redux state because the header and notification center both display them.
+
+Management view:
+
+- Notifications affect user attention, operational messaging, and trust.
+- Message priority, wording, and ownership need clear governance.
+
+Governance question:
+
+- Who decides which events deserve notifications, and who is accountable when notifications are noisy, stale, or misleading?
+
 ## Management Transfer Card Template
 
 Use this template to turn a state decision into an architecture and management discussion:
@@ -132,6 +148,16 @@ Live stock:
 - Decision owner: inventory or order management owner.
 - How we verify it: stock reducer checks, disabled add-to-cart behavior, and checkout blocking.
 
+Notifications:
+
+- Technical decision: generate simulated events with RxJS and store the list plus unread count in Redux.
+- Why this state lives there: header and notification center need the same unread count and current list.
+- Teams or roles affected: product, operations, support, frontend.
+- Risk if unmanaged: noisy or stale messages can train users to ignore important information.
+- Backend or governance dependency: real systems need event ownership, priority rules, and auditability.
+- Decision owner: product operations or customer experience owner.
+- How we verify it: reducer tests, unread count checks, and message display checks.
+
 Small UI state:
 
 - Technical decision: keep component-only state local.
@@ -161,6 +187,7 @@ Small UI state:
 - What tests protect teams from breaking each other?
 - How can a team prevent the Redux store from becoming a dumping ground?
 - What customer promise is being made when checkout is enabled?
+- Who governs notification priority and message quality?
 
 ## Training Takeaway
 

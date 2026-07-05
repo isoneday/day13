@@ -226,6 +226,41 @@ function FixedCartBadge() {
 
 The fixed version has one source of truth. It reads from Redux instead of storing a second local cart count.
 
+### Final Participant Assignment: Notification Center
+
+The Notification Center is a small feature for participants to study and extend.
+
+What the current version does:
+
+- `NotificationCenter` starts an RxJS `interval(8000)`.
+- Every 8 seconds, the stream creates a simulated notification.
+- `notificationsSlice` stores the notification list in Redux.
+- `notificationsSlice` also stores `unreadCount`.
+- `Header` reads `unreadCount` and shows it beside the cart badge.
+- `NotificationCenter` can dispatch `allNotificationsMarkedRead()`.
+
+Notification messages are related to stock updates, voucher campaigns, checkout reminders, and system messages.
+
+Teaching point:
+
+- Notifications are a stream because new events arrive over time.
+- Notifications are state because the app must remember the current list and unread count.
+
+Participant extension ideas:
+
+- Add a button to remove one notification.
+- Add a filter for unread notifications.
+- Add a notification type label color.
+- Limit the list to the latest 10 notifications.
+- Add a reducer test for `notificationReceived`.
+
+Questions for participants:
+
+- Which part is the stream?
+- Which part is Redux state?
+- Why should unread count be consistent with the notification list?
+- Who should own notification rules in a real product team?
+
 ## Part 8: Management Transfer
 
 End by connecting code decisions to team decisions:

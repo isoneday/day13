@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 function DebugPanel() {
   const products = useSelector((state) => state.products);
   const cart = useSelector((state) => state.cart);
+  const notifications = useSelector((state) => state.notifications);
   const voucher = useSelector((state) => state.voucher);
 
   return (
@@ -26,6 +27,10 @@ function DebugPanel() {
         <div>
           <h3>voucher state</h3>
           <pre>{JSON.stringify(voucher, null, 2)}</pre>
+        </div>
+        <div>
+          <h3>notifications state</h3>
+          <pre>{JSON.stringify(notifications, null, 2)}</pre>
         </div>
       </div>
     </section>

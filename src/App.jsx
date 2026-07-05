@@ -4,6 +4,7 @@ import CartSummary from './components/CartSummary';
 import DebugPanel from './components/DebugPanel';
 import Header from './components/Header';
 import LiveStockSimulator from './components/LiveStockSimulator';
+import NotificationCenter from './components/NotificationCenter';
 import ProductList from './components/ProductList';
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
       </div>
 
       <LiveStockSimulator />
+      <NotificationCenter />
       <BuggyCartBadge />
       <ArchitectureDecisionPanel />
       <DebugPanel />
