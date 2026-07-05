@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 function DebugPanel() {
   const products = useSelector((state) => state.products);
   const cart = useSelector((state) => state.cart);
+  const voucher = useSelector((state) => state.voucher);
 
   return (
     <section className="panel debug-panel" aria-labelledby="debug-title">
@@ -21,6 +22,10 @@ function DebugPanel() {
         <div>
           <h3>cart state</h3>
           <pre>{JSON.stringify(cart, null, 2)}</pre>
+        </div>
+        <div>
+          <h3>voucher state</h3>
+          <pre>{JSON.stringify(voucher, null, 2)}</pre>
         </div>
       </div>
     </section>

@@ -15,7 +15,7 @@ React UI components
 Redux Toolkit store
   -> product state
   -> cart state
-  -> voucher state later
+  -> voucher state
   -> stock state later
   -> notification state later
 
@@ -84,6 +84,29 @@ Category select or search input
 ```
 
 This milestone does not use RxJS yet. Search is intentionally simple Redux state first so participants can learn the central store flow before adding reactive streams.
+
+## Planned Voucher Validation Flow
+
+Voucher validation is split between a future RxJS stream and current Redux state:
+
+```text
+Voucher input event
+  -> future RxJS stream handles timing, debounce, cancellation, and fake API calls
+  -> dispatch voucher validation actions
+  -> voucherSlice stores the latest result
+  -> UI and DebugPanel read voucher state from Redux
+```
+
+The voucher input is planned as a stream because typing and validation are time-based. Users may type quickly, change a code before validation finishes, or trigger a simulated service error. RxJS will make those timing and cancellation rules visible for teaching.
+
+The voucher result belongs in Redux because it is business-relevant shared state. Cart totals, checkout messaging, and the Debug Panel may all need the same current answer: the code, status, discount percent, message, and error.
+
+The current fake API is `validateVoucherApi(code)`. It supports:
+
+- `SAVE20`: valid with 20% discount
+- `FOOD10`: valid with 10% discount
+- `ERROR`: simulated service error
+- Any other code: invalid
 
 ## Teaching Note
 
