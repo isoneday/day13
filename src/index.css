@@ -348,16 +348,27 @@ dd {
   color: #8c2f2f;
 }
 
-.error-box {
+.error-box,
+.warning-box {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
-  border: 1px solid #f1c5c5;
   border-radius: 8px;
-  background: #fff4f4;
   margin-bottom: 18px;
   padding: 12px;
+}
+
+.error-box {
+  border: 1px solid #f1c5c5;
+  background: #fff4f4;
+}
+
+.warning-box {
+  flex-direction: column;
+  border: 1px solid #ead39a;
+  background: #fff9e8;
+  color: #7a5411;
 }
 
 .final-total {

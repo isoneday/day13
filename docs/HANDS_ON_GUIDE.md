@@ -182,6 +182,14 @@ Teaching note: the stream represents a system event. Redux stores the current st
 
 Real systems would not trust this frontend simulation for checkout. A backend must validate stock before an order is accepted.
 
+### Teaching Explanation: Checkout Stock Validation
+
+Checkout is business-critical because it is the point where a user expects the shop to honor the cart. If an item becomes unavailable while it is already in the cart, the UI should not allow the user to continue as if the item can still be purchased.
+
+In this app, `CartSummary` compares cart items with the current product stock in Redux. If any cart item now has stock `0`, it shows a warning and blocks **Start checkout**. The user must remove unavailable items manually.
+
+This frontend validation improves clarity and protects the user experience, but it is not enough for a real shop. Real systems also need backend validation at checkout because frontend state can be stale, delayed, or manipulated. The frontend can guide the user; the backend must make the final business decision.
+
 ## Part 8: Management Transfer
 
 End by connecting code decisions to team decisions:

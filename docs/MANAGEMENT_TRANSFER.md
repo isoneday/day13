@@ -68,6 +68,23 @@ Governance question:
 
 - What happens when inventory state changes while a user is buying?
 
+## Example: Checkout Reliability
+
+Technical view:
+
+- Checkout must check current stock before allowing the user to continue.
+- Frontend validation can block obviously invalid checkout attempts.
+- Backend validation is still required before accepting an order.
+
+Management view:
+
+- Checkout reliability affects customer trust, support volume, refund risk, and revenue reporting.
+- Inventory, checkout, and customer experience teams need shared rules for unavailable items.
+
+Governance question:
+
+- Who owns the final decision when cart state and inventory state disagree?
+
 ## Discussion Prompts
 
 - What state should require architectural review before changing?
@@ -75,6 +92,7 @@ Governance question:
 - What selector or action names become shared contracts?
 - What tests protect teams from breaking each other?
 - How can a team prevent the Redux store from becoming a dumping ground?
+- What customer promise is being made when checkout is enabled?
 
 ## Training Takeaway
 

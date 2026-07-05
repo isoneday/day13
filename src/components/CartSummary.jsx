@@ -10,12 +10,18 @@ import VoucherBox from './VoucherBox';
 function CartSummary() {
   const dispatch = useDispatch();
   const { items, checkoutStep, error } = useSelector((state) => state.cart);
+  const products = useSelector((state) => state.products.items);
   const voucher = useSelector((state) => state.voucher);
 
   const totalQuantity = items.reduce((total, item) => total + item.quantity, 0);
   const totalPrice = items.reduce((total, item) => total + item.price * item.quantity, 0);
   const discountAmount = totalPrice * (voucher.discountPercent / 100);
   const finalPrice = totalPrice - discountAmount;
+  const unavailableItems = items.filter((item) => {
+    const currentProduct = products.find((product) => product.id === item.id);
+    return !currentProduct || currentProduct.stock <= 0;
+  });
+  const hasUnavailableItems = unavailableItems.length > 0;
 
   return (
     <aside className="panel cart-summary" aria-labelledby="cart-title">
@@ -55,6 +61,16 @@ function CartSummary() {
         </ul>
       )}
 
+      {hasUnavailableItems && (
+        <div className="warning-box" role="alert">
+          <strong>Checkout blocked.</strong>
+          <span>
+            Remove unavailable items before checkout:{' '}
+            {unavailableItems.map((item) => item.name).join(', ')}.
+          </span>
+        </div>
+      )}
+
       <VoucherBox />
 
       <dl className="totals">
@@ -83,7 +99,11 @@ function CartSummary() {
       </dl>
 
       <div className="cart-actions">
-        <button type="button" onClick={() => dispatch(checkoutStarted())}>
+        <button
+          type="button"
+          disabled={hasUnavailableItems}
+          onClick={() => dispatch(checkoutStarted())}
+        >
           Start checkout
         </button>
         <button type="button" className="secondary-button" onClick={() => dispatch(cartCleared())}>
