@@ -15,7 +15,7 @@ By the end of this training project, participants should be able to:
 - Use RxJS streams for event-like flows such as search input, voucher checks, stock updates, and notifications.
 - Discuss how technical state decisions become architecture, ownership, and governance decisions.
 
-## Planned Technology
+## Technology
 
 - React
 - Vite
@@ -54,14 +54,33 @@ Future coding tasks should also follow [AGENTS.md](AGENTS.md).
 
 ## Setup
 
-The React/Vite app has not been scaffolded yet. When implementation begins, use a simple Vite React JavaScript setup and install only the required state management libraries.
-
-Expected future commands:
+Install dependencies:
 
 ```bash
 npm install
+```
+
+Run the local development server:
+
+```bash
 npm run dev
 ```
+
+Build for production:
+
+```bash
+npm run build
+```
+
+Preview the production build:
+
+```bash
+npm run preview
+```
+
+## Current App Status
+
+The project currently contains the initial Vite React shell and folder structure for the future training app. Redux Toolkit, React Redux, and RxJS are installed, but Redux features and RxJS streams have not been implemented yet.
 
 ## Project Rule
 
