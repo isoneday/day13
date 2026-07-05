@@ -82,6 +82,19 @@ The product filters use the same pattern:
 
 Teaching note: this milestone uses plain Redux state for search on purpose. RxJS will be introduced later when timing behavior, such as debouncing, becomes part of the lesson.
 
+### Instructor Explanation: Redux Debug Panel
+
+The Redux Debug Panel shows the live `products` and `cart` slices as formatted JSON. Use it during demonstrations so participants can see the store update immediately after an action is dispatched.
+
+Suggested classroom flow:
+
+1. Click **Add to cart** and watch `cart.items` change.
+2. Remove an item and watch the cart array update.
+3. Start checkout with an empty cart and point out the `error` value.
+4. Change category or search text and watch `selectedCategory` and `searchKeyword` update.
+
+The panel connects the visible UI to the Redux path: component event, dispatched action, reducer update, store state, and re-rendered UI.
+
 ## Part 5: RxJS Search Stream
 
 Use RxJS to model search input as a stream:

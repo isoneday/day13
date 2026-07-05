@@ -1,4 +1,5 @@
 import CartSummary from './components/CartSummary';
+import DebugPanel from './components/DebugPanel';
 import Header from './components/Header';
 import ProductList from './components/ProductList';
 
@@ -18,6 +19,8 @@ function App() {
         <ProductList />
         <CartSummary />
       </div>
+
+      <DebugPanel />
     </main>
   );
 }

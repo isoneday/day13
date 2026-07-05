@@ -287,12 +287,38 @@ dd {
   padding: 12px;
 }
 
+.debug-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.debug-grid h3 {
+  margin-bottom: 10px;
+}
+
+pre {
+  max-height: 360px;
+  overflow: auto;
+  border: 1px solid #d8e0dd;
+  border-radius: 8px;
+  background: #101820;
+  color: #f4f7f6;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  margin: 0;
+  padding: 16px;
+  white-space: pre-wrap;
+}
+
 @media (max-width: 900px) {
   .shop-layout {
     grid-template-columns: 1fr;
   }
 
-  .product-grid {
+  .product-grid,
+  .debug-grid {
     grid-template-columns: 1fr;
   }
 }
