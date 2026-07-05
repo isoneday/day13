@@ -85,6 +85,74 @@ Governance question:
 
 - Who owns the final decision when cart state and inventory state disagree?
 
+## Management Transfer Card Template
+
+Use this template to turn a state decision into an architecture and management discussion:
+
+```text
+Topic:
+Technical decision:
+Why this state lives there:
+Teams or roles affected:
+Risk if unmanaged:
+Backend or governance dependency:
+Decision owner:
+How we verify it:
+```
+
+## Example Answers From This App
+
+Cart state:
+
+- Technical decision: store cart items in Redux.
+- Why this state lives there: header, cart summary, checkout, and debugging all need one source of truth.
+- Teams or roles affected: frontend, checkout, product, support.
+- Risk if unmanaged: wrong totals, wrong badges, and customer confusion.
+- Backend or governance dependency: checkout must validate final order details.
+- Decision owner: checkout or commerce experience owner.
+- How we verify it: reducer tests, cart UI checks, and checkout validation checks.
+
+Voucher validation:
+
+- Technical decision: process typing with RxJS and store the result in Redux.
+- Why this state lives there: typing is time-based, but the validation result affects cart totals.
+- Teams or roles affected: growth, pricing, checkout, frontend.
+- Risk if unmanaged: stale discounts, unclear errors, or inconsistent pricing.
+- Backend or governance dependency: real voucher rules must come from a trusted service.
+- Decision owner: pricing or promotion owner.
+- How we verify it: stream timing tests, fake API cases, and cart total checks.
+
+Live stock:
+
+- Technical decision: simulate stock updates with RxJS and store current stock in Redux.
+- Why this state lives there: stock can change without user action and affects product cards and checkout.
+- Teams or roles affected: inventory, checkout, frontend, customer support.
+- Risk if unmanaged: users may try to buy unavailable items.
+- Backend or governance dependency: backend stock validation is required before accepting orders.
+- Decision owner: inventory or order management owner.
+- How we verify it: stock reducer checks, disabled add-to-cart behavior, and checkout blocking.
+
+Small UI state:
+
+- Technical decision: keep component-only state local.
+- Why this state lives there: local toggles and draft display values do not need global coordination.
+- Teams or roles affected: mainly the owning frontend feature team.
+- Risk if unmanaged: Redux becomes noisy and harder to govern.
+- Backend or governance dependency: usually none.
+- Decision owner: feature owner.
+- How we verify it: component behavior checks.
+
+## Open Level-3 Management Questions
+
+- Who is allowed to add a new Redux slice?
+- Which state changes require architecture review?
+- Which business rules must be validated on the backend even if the frontend already checks them?
+- Who owns pricing conflicts between voucher state and checkout totals?
+- Who owns inventory conflicts between cart state and stock state?
+- How should teams communicate changes to shared selectors, action names, or state shape?
+- What telemetry would reveal state mismatch problems in production?
+- Which customer promise is implied when checkout is enabled?
+
 ## Discussion Prompts
 
 - What state should require architectural review before changing?

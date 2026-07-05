@@ -1,3 +1,4 @@
+import ArchitectureDecisionPanel from './components/ArchitectureDecisionPanel';
 import BuggyCartBadge from './components/BuggyCartBadge';
 import CartSummary from './components/CartSummary';
 import DebugPanel from './components/DebugPanel';
@@ -24,6 +25,7 @@ function App() {
 
       <LiveStockSimulator />
       <BuggyCartBadge />
+      <ArchitectureDecisionPanel />
       <DebugPanel />
     </main>
   );

@@ -43,6 +43,20 @@ Use a simulated delay and show loading, success, and failure states. Emphasize w
 
 Simulate stock changing while the cart is open. Discuss why derived UI state must respond to central stock changes.
 
+### Demo 5: Architecture Decision Panel
+
+Use the panel after participants have seen cart, voucher, search, stock, and the bug simulation. Walk row by row and ask participants to identify the technical decision, the reason, and the unmanaged risk.
+
+Debrief prompts:
+
+- Which rows are local state, Redux state, or RxJS streams?
+- Which rows also require backend validation?
+- Which risks are technical bugs, and which become customer trust or revenue risks?
+- Who should own each decision in a real team?
+- What tests or governance checks would keep the decision reliable?
+
+Close the debrief by connecting the panel to management transfer: state placement is not only an implementation choice. It defines ownership, review boundaries, failure modes, and the customer promise behind checkout.
+
 ## Questions For Participants
 
 - Which state can stay inside one component?

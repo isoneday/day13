@@ -385,6 +385,34 @@ dd {
   font-weight: 700;
 }
 
+.decision-table-wrap {
+  overflow-x: auto;
+}
+
+.decision-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+.decision-table th,
+.decision-table td {
+  border-bottom: 1px solid #d8e0dd;
+  padding: 12px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.decision-table thead th {
+  background: #f4f7f6;
+  color: #3a4650;
+}
+
+.decision-table tbody th {
+  color: #205b4c;
+  white-space: nowrap;
+}
+
 .empty-state,
 .muted {
   color: #6b7780;
