@@ -190,6 +190,42 @@ In this app, `CartSummary` compares cart items with the current product stock in
 
 This frontend validation improves clarity and protects the user experience, but it is not enough for a real shop. Real systems also need backend validation at checkout because frontend state can be stale, delayed, or manipulated. The frontend can guide the user; the backend must make the final business decision.
 
+### Debugging Exercise: Duplicated Cart State Bug
+
+`BuggyCartBadge` is a deliberate bug simulation. It displays the real cart quantity from Redux and an incorrect local cart count in the same panel.
+
+Ask participants:
+
+- Which state is inconsistent?
+- Which source is correct?
+- What is the business risk?
+- What is the fix direction?
+
+Expected discussion:
+
+- The local cart count is inconsistent because it is separate duplicated state.
+- The Redux cart state is correct because cart items are shared business state.
+- The business risk is that users may see the wrong cart count, lose trust, or make checkout decisions based on stale UI.
+- The fix direction is to remove duplicated local state and derive the badge count from Redux.
+
+Do not fix the component during the first debugging pass. Keep the bug visible so participants can compare the UI with the Redux Debug Panel.
+
+Fixed version snippet:
+
+```jsx
+import { useSelector } from 'react-redux';
+
+function FixedCartBadge() {
+  const cartQuantity = useSelector((state) =>
+    state.cart.items.reduce((total, item) => total + item.quantity, 0),
+  );
+
+  return <strong>{cartQuantity}</strong>;
+}
+```
+
+The fixed version has one source of truth. It reads from Redux instead of storing a second local cart count.
+
 ## Part 8: Management Transfer
 
 End by connecting code decisions to team decisions:

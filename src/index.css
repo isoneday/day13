@@ -338,6 +338,53 @@ dd {
   color: #3a4650;
 }
 
+.bug-panel {
+  display: grid;
+  gap: 16px;
+  border-color: #ead39a;
+  background: #fffdf6;
+}
+
+.bug-panel h2,
+.bug-panel p {
+  margin-bottom: 0;
+}
+
+.bug-count-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.bug-count-grid div {
+  display: grid;
+  gap: 8px;
+  border: 1px solid #d8e0dd;
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 16px;
+}
+
+.bug-count-grid span {
+  color: #6b7780;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.bug-count-grid strong {
+  font-size: 2rem;
+}
+
+.incorrect-count {
+  border-color: #f1c5c5;
+  color: #8c2f2f;
+}
+
+.bug-note {
+  color: #7a5411;
+  font-weight: 700;
+}
+
 .empty-state,
 .muted {
   color: #6b7780;
@@ -408,6 +455,7 @@ pre {
   }
 
   .product-grid,
+  .bug-count-grid,
   .debug-grid {
     grid-template-columns: 1fr;
   }

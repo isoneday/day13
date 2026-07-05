@@ -1,3 +1,4 @@
+import BuggyCartBadge from './components/BuggyCartBadge';
 import CartSummary from './components/CartSummary';
 import DebugPanel from './components/DebugPanel';
 import Header from './components/Header';
@@ -22,6 +23,7 @@ function App() {
       </div>
 
       <LiveStockSimulator />
+      <BuggyCartBadge />
       <DebugPanel />
     </main>
   );
