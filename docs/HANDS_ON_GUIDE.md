@@ -73,14 +73,24 @@ The current app demonstrates the basic Redux loop with the cart:
 5. `Header` and `CartSummary` read cart state with `useSelector`.
 6. React re-renders the cart badge, item list, total quantity, and total price.
 
-The product filters use the same pattern:
+The product filters use Redux state, but search typing now has one extra teaching layer:
 
-1. The user changes the category or search field.
-2. `ProductList` dispatches a products action.
-3. `productsSlice` stores the selected category or search keyword.
+1. The user changes the category field.
+2. `ProductList` dispatches `categorySelected(value)`.
+3. `productsSlice` stores the selected category.
 4. `ProductList` reads that state and displays the matching products.
 
-Teaching note: this milestone uses plain Redux state for search on purpose. RxJS will be introduced later when timing behavior, such as debouncing, becomes part of the lesson.
+Search is different because typing is a stream:
+
+1. The user types in `ProductSearch`.
+2. Local React state updates immediately so the input feels responsive.
+3. The same value is sent into an RxJS `Subject`.
+4. `debounceTime(400)` waits until typing pauses.
+5. `distinctUntilChanged()` ignores repeated stable keywords.
+6. Redux receives `searchKeywordChanged(keyword)` only after the debounce.
+7. `ProductList` derives visible products from Redux state.
+
+Teaching note: local state owns the immediate input display, RxJS owns the timing of typing events, and Redux owns the stable search keyword used by the shared product feature.
 
 ### Instructor Explanation: Redux Debug Panel
 
@@ -103,9 +113,10 @@ Use RxJS to model search input as a stream:
 - Capture input changes.
 - Debounce typing.
 - Ignore repeated values.
-- Dispatch a Redux action or update search results after the stream emits.
+- Dispatch `searchKeywordChanged` after the stream emits.
+- Show the active Redux search keyword so participants can see the delay.
 
-Teaching note: RxJS should be introduced for timing and event coordination, not as a replacement for all state.
+Teaching note: RxJS should be introduced for timing and event coordination, not as a replacement for all state. The product list result is derived in the UI from Redux state; it is not stored as another array in the store.
 
 ## Part 6: Voucher Validation Stream
 

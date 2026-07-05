@@ -74,16 +74,24 @@ ProductCard button click
   -> Header cart badge and CartSummary re-render from useSelector
 ```
 
-Product filtering also uses Redux state:
+Product filtering uses Redux state for the stable filter values:
 
 ```text
-Category select or search input
-  -> dispatch(categorySelected(value)) or dispatch(searchKeywordChanged(value))
-  -> products reducer updates selectedCategory or searchKeyword
+Category select
+  -> dispatch(categorySelected(value))
+  -> products reducer updates selectedCategory
   -> ProductList reads Redux state and displays matching products
+
+Search input typing
+  -> ProductSearch updates local input state immediately
+  -> ProductSearch sends values through an RxJS Subject
+  -> debounceTime(400) waits for typing to pause
+  -> dispatch(searchKeywordChanged(keyword))
+  -> products reducer stores the stable search keyword
+  -> ProductList derives visible products from Redux state
 ```
 
-This milestone does not use RxJS yet. Search is intentionally simple Redux state first so participants can learn the central store flow before adding reactive streams.
+Search typing is a stream because each keystroke is an event over time. The product filter is shared feature state because the active keyword is useful for the product list, Debug Panel, and teaching flow. The product list result is not stored separately; it is derived in the UI from `items`, `selectedCategory`, and `searchKeyword`.
 
 ## Voucher Validation Flow
 

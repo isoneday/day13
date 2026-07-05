@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { categorySelected, searchKeywordChanged } from '../features/products/productsSlice';
+import { categorySelected } from '../features/products/productsSlice';
 import ProductCard from './ProductCard';
+import ProductSearch from './ProductSearch';
 
 function ProductList() {
   const dispatch = useDispatch();
@@ -41,16 +42,12 @@ function ProductList() {
           </select>
         </label>
 
-        <label>
-          Search
-          <input
-            type="search"
-            value={searchKeyword}
-            onChange={(event) => dispatch(searchKeywordChanged(event.target.value))}
-            placeholder="Search products"
-          />
-        </label>
+        <ProductSearch />
       </div>
+
+      <p className="active-search">
+        Redux search keyword: <strong>{searchKeyword || 'none'}</strong>
+      </p>
 
       {loading && <p className="muted">Loading products...</p>}
       {error && <p className="error-message">{error}</p>}
