@@ -5,13 +5,17 @@ import {
   cartItemRemoved,
   checkoutStarted,
 } from '../features/cart/cartSlice';
+import VoucherBox from './VoucherBox';
 
 function CartSummary() {
   const dispatch = useDispatch();
   const { items, checkoutStep, error } = useSelector((state) => state.cart);
+  const voucher = useSelector((state) => state.voucher);
 
   const totalQuantity = items.reduce((total, item) => total + item.quantity, 0);
   const totalPrice = items.reduce((total, item) => total + item.price * item.quantity, 0);
+  const discountAmount = totalPrice * (voucher.discountPercent / 100);
+  const finalPrice = totalPrice - discountAmount;
 
   return (
     <aside className="panel cart-summary" aria-labelledby="cart-title">
@@ -51,14 +55,26 @@ function CartSummary() {
         </ul>
       )}
 
+      <VoucherBox />
+
       <dl className="totals">
         <div>
           <dt>Total quantity</dt>
           <dd>{totalQuantity}</dd>
         </div>
         <div>
-          <dt>Total price</dt>
+          <dt>Subtotal</dt>
           <dd>${totalPrice.toFixed(2)}</dd>
+        </div>
+        <div>
+          <dt>Voucher discount</dt>
+          <dd>
+            {voucher.discountPercent}% (-${discountAmount.toFixed(2)})
+          </dd>
+        </div>
+        <div className="final-total">
+          <dt>Final price</dt>
+          <dd>${finalPrice.toFixed(2)}</dd>
         </div>
         <div>
           <dt>Checkout step</dt>

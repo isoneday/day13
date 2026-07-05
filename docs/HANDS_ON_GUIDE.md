@@ -84,7 +84,7 @@ Teaching note: this milestone uses plain Redux state for search on purpose. RxJS
 
 ### Instructor Explanation: Redux Debug Panel
 
-The Redux Debug Panel shows the live `products` and `cart` slices as formatted JSON. Use it during demonstrations so participants can see the store update immediately after an action is dispatched.
+The Redux Debug Panel shows the live `products`, `cart`, and `voucher` slices as formatted JSON. Use it during demonstrations so participants can see the store update immediately after an action is dispatched.
 
 Suggested classroom flow:
 
@@ -92,6 +92,7 @@ Suggested classroom flow:
 2. Remove an item and watch the cart array update.
 3. Start checkout with an empty cart and point out the `error` value.
 4. Change category or search text and watch `selectedCategory` and `searchKeyword` update.
+5. Type a voucher code and watch `status`, `discountPercent`, `message`, and `error` change.
 
 The panel connects the visible UI to the Redux path: component event, dispatched action, reducer update, store state, and re-rendered UI.
 
@@ -119,6 +120,28 @@ Simulate voucher validation:
 Discussion prompt:
 
 Why is cancellation useful when a user types quickly?
+
+### Teaching Explanation: Voucher Stream
+
+The voucher box demonstrates how RxJS and Redux can work together without doing the same job.
+
+Step-by-step flow:
+
+1. The user types in the voucher input.
+2. `VoucherBox` dispatches `voucherInputChanged(value)` so Redux stores the latest text.
+3. `VoucherBox` also sends the value into an RxJS `Subject`.
+4. The stream trims the value and waits with `debounceTime(500)`.
+5. `distinctUntilChanged()` ignores the same code if it appears again.
+6. `filter()` only allows codes with at least 3 characters.
+7. `tap()` dispatches `voucherValidationStarted()` before the fake API call.
+8. `switchMap()` calls `validateVoucherApi(code)` and keeps only the latest request result.
+9. `catchError()` handles the simulated `ERROR` code and dispatches `voucherValidationErrored()`.
+10. Valid results dispatch `voucherValidationSucceeded()`.
+11. Invalid results dispatch `voucherValidationFailed()`.
+
+Use `SAVE20` to show a 20% discount, `FOOD10` to show a 10% discount, any unknown code to show an invalid result, and `ERROR` to show the service error path.
+
+Teaching note: debounce waits until the user pauses typing. `switchMap` protects the UI from older validation results arriving after a newer code was typed.
 
 ## Part 7: Live Stock Stream
 

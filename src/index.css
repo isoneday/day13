@@ -265,6 +265,45 @@ dd {
   margin-top: 20px;
 }
 
+.voucher-box {
+  display: grid;
+  gap: 12px;
+  border: 1px solid #d8e0dd;
+  border-radius: 8px;
+  background: #f8fbfa;
+  margin: 20px 0;
+  padding: 16px;
+}
+
+.voucher-box h3,
+.voucher-box p {
+  margin-bottom: 0;
+}
+
+.voucher-status {
+  color: #6b7780;
+  font-size: 0.92rem;
+}
+
+.voucher-message {
+  color: #286f5d;
+  font-weight: 700;
+}
+
+.voucher-error,
+.voucher-status-error,
+.voucher-status-invalid {
+  color: #8c2f2f;
+}
+
+.voucher-status-valid {
+  color: #286f5d;
+}
+
+.voucher-status-validating {
+  color: #8a5b15;
+}
+
 .empty-state,
 .muted {
   color: #6b7780;
@@ -285,6 +324,12 @@ dd {
   background: #fff4f4;
   margin-bottom: 18px;
   padding: 12px;
+}
+
+.final-total {
+  border-top: 1px solid #d8e0dd;
+  margin-top: 6px;
+  padding-top: 10px;
 }
 
 .debug-grid {

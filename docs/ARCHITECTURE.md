@@ -85,21 +85,28 @@ Category select or search input
 
 This milestone does not use RxJS yet. Search is intentionally simple Redux state first so participants can learn the central store flow before adding reactive streams.
 
-## Planned Voucher Validation Flow
+## Voucher Validation Flow
 
-Voucher validation is split between a future RxJS stream and current Redux state:
+Voucher validation is split between an RxJS stream and Redux state:
 
 ```text
 Voucher input event
-  -> future RxJS stream handles timing, debounce, cancellation, and fake API calls
+  -> VoucherBox dispatches voucherInputChanged(value)
+  -> VoucherBox sends value to an RxJS Subject
+  -> RxJS handles debounce, duplicate values, cancellation, and fake API calls
   -> dispatch voucher validation actions
   -> voucherSlice stores the latest result
-  -> UI and DebugPanel read voucher state from Redux
+  -> CartSummary and DebugPanel read voucher state from Redux
 ```
 
-The voucher input is planned as a stream because typing and validation are time-based. Users may type quickly, change a code before validation finishes, or trigger a simulated service error. RxJS will make those timing and cancellation rules visible for teaching.
+The voucher input is a stream because typing and validation are time-based. Users may type quickly, change a code before validation finishes, or trigger a simulated service error. RxJS makes those timing and cancellation rules visible for teaching.
 
-The voucher result belongs in Redux because it is business-relevant shared state. Cart totals, checkout messaging, and the Debug Panel may all need the same current answer: the code, status, discount percent, message, and error.
+The voucher result belongs in Redux because it is business-relevant shared state. Cart totals, checkout messaging, and the Debug Panel all need the same current answer: the code, status, discount percent, message, and error.
+
+RxJS and Redux have different jobs here:
+
+- RxJS manages the event process: wait for typing to pause, ignore repeated values, call the fake API, and ignore stale requests with `switchMap`.
+- Redux stores the current business state: what code was typed, whether validation is idle, typing, validating, valid, invalid, or error, and what discount should affect cart totals.
 
 The current fake API is `validateVoucherApi(code)`. It supports:
 
