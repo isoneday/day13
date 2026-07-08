@@ -1,10 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { interval } from 'rxjs';
 import {
   allNotificationsMarkedRead,
   notificationReceived,
-  notificationRemoved,
 } from '../features/notifications/notificationsSlice.js';
 
 const notificationMessages = [
@@ -30,11 +29,6 @@ function NotificationCenter() {
   const dispatch = useDispatch();
   const { items, unreadCount } = useSelector((state) => state.notifications);
   const messageIndexRef = useRef(0);
-  const [showUnreadOnly, setShowUnreadOnly] = useState(false);
-
-  const visibleItems = showUnreadOnly
-    ? items.filter((notification) => !notification.read)
-    : items;
 
   useEffect(() => {
     const subscription = interval(8000).subscribe(() => {
@@ -66,36 +60,21 @@ function NotificationCenter() {
         </button>
       </div>
 
-      <div className="notification-controls">
-        <p className="notification-summary">
-          Unread notifications: <strong>{unreadCount}</strong>
-        </p>
-        <label className="unread-toggle">
-          <input
-            type="checkbox"
-            checked={showUnreadOnly}
-            onChange={(event) => setShowUnreadOnly(event.target.checked)}
-          />
-          Show unread only
-        </label>
-      </div>
+      <p className="notification-summary">
+        Unread notifications: <strong>{unreadCount}</strong>
+      </p>
 
-      {visibleItems.length === 0 ? (
-        <p className="empty-state">
-          {showUnreadOnly ? 'No unread notifications.' : 'Waiting for the first simulated notification.'}
-        </p>
+      {items.length === 0 ? (
+        <p className="empty-state">Waiting for the first simulated notification.</p>
       ) : (
         <ul className="notification-list">
-          {visibleItems.map((notification) => (
+          {items.map((notification) => (
             <li key={notification.id} className={notification.read ? 'notification-read' : ''}>
               <div>
                 <strong>{notification.type}</strong>
                 <span>{notification.createdAt}</span>
               </div>
               <p>{notification.message}</p>
-              <button type="button" onClick={() => dispatch(notificationRemoved(notification.id))}>
-                Remove
-              </button>
             </li>
           ))}
         </ul>

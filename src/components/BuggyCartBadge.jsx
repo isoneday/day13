@@ -1,33 +1,35 @@
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 
 function BuggyCartBadge() {
   const realCartQuantity = useSelector((state) =>
     state.cart.items.reduce((total, item) => total + item.quantity, 0),
   );
+  const [localCartCount] = useState(0);
 
   return (
     <section className="panel bug-panel" aria-labelledby="bug-title">
       <div>
-        <p className="eyebrow">Bug Fixed</p>
+        <p className="eyebrow">Deliberate Bug Simulation</p>
         <h2 id="bug-title">State Mismatch: Cart Badge</h2>
       </div>
       <p>
-        This panel used to keep a duplicated local cart count that never updated. The fix was to
-        delete that local state entirely and read the Redux cart quantity directly, instead of
-        syncing two sources of truth.
+        This teaching panel intentionally keeps an incorrect local cart count. Add products to the
+        cart and compare both values with the Redux Debug Panel.
       </p>
       <div className="bug-count-grid">
         <div>
           <span>Redux cart quantity</span>
           <strong>{realCartQuantity}</strong>
         </div>
-        <div>
-          <span>Local cart count (now the same selector)</span>
-          <strong>{realCartQuantity}</strong>
+        <div className="incorrect-count">
+          <span>Incorrect local cart count</span>
+          <strong>{localCartCount}</strong>
         </div>
       </div>
       <p className="bug-note">
-        There is now only one source of truth: <code>state.cart.items</code>.
+        The bug is duplicated state: the component displays a local value that is not updated from
+        the real cart source of truth.
       </p>
     </section>
   );
