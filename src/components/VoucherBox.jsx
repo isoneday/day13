@@ -11,6 +11,7 @@ import {
   tap,
 } from 'rxjs/operators';
 import {
+  voucherCleared,
   voucherInputChanged,
   voucherValidationErrored,
   voucherValidationFailed,
@@ -60,6 +61,27 @@ function VoucherBox() {
     voucherInput$.next(value);
   }
 
+  function handleRetry() {
+    // Retry is an explicit one-off user action, not a typing event, so it
+    // deliberately bypasses debounceTime/distinctUntilChanged/filter and
+    // calls the fake API directly instead of pushing back into voucherInput$
+    // (distinctUntilChanged would otherwise swallow the identical code).
+    dispatch(voucherValidationStarted());
+
+    validateVoucherApi(voucher.code)
+      .then((result) => {
+        if (result.valid) {
+          dispatch(voucherValidationSucceeded(result));
+          return;
+        }
+
+        dispatch(voucherValidationFailed(result));
+      })
+      .catch((error) => {
+        dispatch(voucherValidationErrored(error.message));
+      });
+  }
+
   return (
     <section className="voucher-box" aria-labelledby="voucher-title">
       <h3 id="voucher-title">Voucher</h3>
@@ -77,7 +99,19 @@ function VoucherBox() {
         Status: <strong>{voucher.status}</strong>
       </p>
       {voucher.message && <p className="voucher-message">{voucher.message}</p>}
-      {voucher.error && <p className="voucher-error">{voucher.error}</p>}
+      {voucher.error && (
+        <div className="voucher-error-row">
+          <p className="voucher-error">{voucher.error}</p>
+          <button type="button" onClick={handleRetry}>
+            Retry
+          </button>
+        </div>
+      )}
+      {voucher.code && (
+        <button type="button" onClick={() => dispatch(voucherCleared())}>
+          Clear voucher
+        </button>
+      )}
     </section>
   );
 }
