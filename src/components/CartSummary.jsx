@@ -2,8 +2,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   cartCleared,
   cartErrorCleared,
-  cartItemAdded,
-  cartItemQuantityDecreased,
   cartItemRemoved,
   checkoutStarted,
 } from '../features/cart/cartSlice';
@@ -54,22 +52,6 @@ function CartSummary() {
                 <span>
                   {item.quantity} x ${item.price.toFixed(2)}
                 </span>
-              </div>
-              <div className="quantity-controls">
-                <button
-                  type="button"
-                  onClick={() => dispatch(cartItemQuantityDecreased(item.id))}
-                >
-                  -
-                </button>
-                <button
-                  type="button"
-                  onClick={() =>
-                    dispatch(cartItemAdded(products.find((product) => product.id === item.id)))
-                  }
-                >
-                  +
-                </button>
               </div>
               <button type="button" onClick={() => dispatch(cartItemRemoved(item.id))}>
                 Remove
